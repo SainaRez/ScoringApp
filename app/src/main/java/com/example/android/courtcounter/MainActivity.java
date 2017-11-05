@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Intent;
 import android.support.v4.view.GravityCompat;
 
 /**
@@ -29,11 +30,41 @@ import android.support.v4.view.GravityCompat;
  */
 public class MainActivity extends AppCompatActivity {
 
+    /**private static final String TAG = "MainActivity";
+    private static final String KEY_INDEX = "index";
+    private static final String KEY_INDEX2 = "index2";
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt(KEY_INDEX, scoreTeamA);
+        savedInstanceState.putInt(KEY_INDEX2, scoreTeamB);
+    }*/
+
+
     // Tracks the score for Team A
     int scoreTeamA = 0;
+    //private static String nameA = "nameA";
+
 
     // Tracks the score for Team B
     int scoreTeamB = 0;
+    //private static String nameB = "nameB";
+
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        final TextView t = (TextView)findViewById(R.id.team_a_score);
+        CharSequence userText = t.getText();
+        outState.putCharSequence("savedText", userText);
+    }
+    public void onRestoreInstanceState(Bundle savedState)
+    {
+        super.onRestoreInstanceState(savedState);
+        final TextView t = (TextView)findViewById(R.id.team_a_score);
+        CharSequence userText = savedState.getCharSequence("savedText");
+        t.setText(userText);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +73,22 @@ public class MainActivity extends AppCompatActivity {
         String jamesbond = "hi";
         String jamesBond = "hello";
         String s = jamesBond + jamesbond;
+
+        //final TextView show = (TextView)findViewById(R.id.team_a_score);
+        /**Button btn = (Button)findViewById(R.id.button1);
+        btn.setOnClickListener(new View.OnClickListener()
+        {
+
+            public void onClick(View v)
+            {
+
+                show.setText(name);
+
+            }
+        });*/
+
+
+
         Toast toast = Toast.makeText(getApplicationContext(), "Make America White Again",
                 Toast.LENGTH_LONG);
         toast.setGravity(0, 0, -700);
@@ -142,5 +189,18 @@ public class MainActivity extends AppCompatActivity {
     public void displayForTeamB(int score) {
         TextView scoreView = (TextView) findViewById(R.id.team_b_score);
         scoreView.setText(String.valueOf(score));
+    }
+
+
+    void emailScores(View v) {
+        Intent scores = new Intent(Intent.ACTION_SEND);
+        scores.setType("message/rfc822");
+        scores.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
+        scores.putExtra(Intent.EXTRA_TEXT, "body of email");
+        try {
+            startActivity(Intent.createChooser(scores, "Send mail..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(MainActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+        }
     }
 }
